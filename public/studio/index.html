@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DRP Nudge Studio</title>
+<link rel="icon" href="/icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/studio/studio.css">
+</head>
+<body>
+<header>
+  <div class="wrap bar">
+    <img class="logo" src="/icons/icon-192.png" alt="">
+    <div>
+      <h1>DRP Nudge Studio</h1>
+      <div class="sub">Configure and send drop-off nudges to real phones</div>
+    </div>
+    <div class="spacer"></div>
+    <nav class="switch" aria-label="Demo apps">
+      <a href="/" target="_blank" rel="noopener">Teacher site</a>
+      <a href="/studio/" aria-current="page">Nudge Studio</a>
+      <a href="/push/" target="_blank" rel="noopener">Push console</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+<main>
+  <section>
+    <div class="card">
+      <div class="step"><span class="n">1</span><h2>Connect a phone</h2><span class="chip" id="phoneCount"><span class="dot"></span>0 phones</span></div>
+      <div class="connect">
+        <div class="qr" id="qr" aria-label="QR code for the teacher site"></div>
+        <div class="howto">
+          <p class="hint" style="margin:0 0 8px">Scan with any phone camera, or open this address:</p>
+          <a class="url" id="siteUrl" target="_blank" rel="noopener"></a>
+          <ol>
+            <li>Sign in with any name and pick a class.</li>
+            <li>Tap <b>Turn on reminders</b>, then <b>Allow</b>.</li>
+            <li>On iPhone, first <b>Add to Home Screen</b> and open it from there.</li>
+          </ol>
+        </div>
+      </div>
+      <ul class="phones" id="phones"><li class="empty">Waiting for the first phone…</li></ul>
+    </div>
+
+    <div class="card">
+      <div class="step"><span class="n">2</span><h2>Pick a drop-off trigger</h2></div>
+      <p class="hint">Every nudge is tied to a moment in the class's journey. Picking one loads its copy, audience and link.</p>
+      <div class="filters" id="filters"></div>
+      <div class="triggers" id="triggers"></div>
+    </div>
+
+    <div class="card">
+      <div class="step"><span class="n">3</span><h2>Configure and send</h2></div>
+      <p class="hint" id="trigRule"></p>
+      <div class="grid2">
+        <label class="f">Title<input id="e_title"></label>
+        <label class="f">Button<input id="e_cta"></label>
+      </div>
+      <label class="f" style="margin-top:12px">Message<textarea id="e_body" rows="3"></textarea></label>
+      <div class="vars">Insert: <button type="button">{teacher}</button> <button type="button">{class}</button> <button type="button">{theme}</button> <button type="button">{book}</button> <button type="button">{left}</button> <button type="button">{days}</button> <button type="button">{streak}</button></div>
+      <div class="grid3" style="margin-top:12px">
+        <label class="f">Send to<select id="aud"></select></label>
+        <label class="f">Opens on tap<select id="e_link"></select></label>
+        <label class="f">When<select id="e_delay"><option value="0">Now</option><option value="10">In 10 seconds</option><option value="30">In 30 seconds</option></select></label>
+      </div>
+      <div class="checks" id="chanChecks">
+        <label><input type="checkbox" value="push" checked> Push to phones</label>
+        <label><input type="checkbox" value="whatsapp"> WhatsApp preview</label>
+      </div>
+      <div class="guard" id="guard"></div>
+      <div class="send-row">
+        <button class="btn primary" id="sendBtn">Send nudge</button>
+        <label class="checks"><input type="checkbox" id="override"> Ignore guardrails for the demo</label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="step"><span class="n">4</span><h2>Delivery</h2><a class="more" href="/push/#messages" target="_blank" rel="noopener">Full report in the push console</a></div>
+      <p class="hint">Shown means the phone displayed it, even when locked. Opened means the teacher tapped it.</p>
+      <ul class="log" id="log"><li class="empty">Nothing sent yet.</li></ul>
+    </div>
+
+    <div class="card">
+      <h2 style="font-size:19px;margin-bottom:6px">How a nudge reaches a locked phone</h2>
+      <div class="arch">
+        <div><b>1 · Nudge Studio</b>Picks the trigger, the audience and the words.</div>
+        <div><b>2 · Push service</b>Our OneSignal-style API personalises each message and signs it.</div>
+        <div><b>3 · Phone's push network</b>Google (Android) or Apple (iPhone) delivers it, even to a sleeping phone.</div>
+        <div><b>4 · Lock screen</b>The phone shows it. A tap opens the exact screen in the teacher site.</div>
+      </div>
+    </div>
+  </section>
+
+  <aside class="preview-col">
+    <div class="card" style="padding:16px">
+      <div class="tabs" id="tabs">
+        <button data-p="lock" class="on">Lock screen</button>
+        <button data-p="whatsapp">WhatsApp</button>
+      </div>
+      <div class="pane on" data-p="lock">
+        <div class="phone lock">
+          <div class="clock"><span id="pv_time">10:41</span><small id="pv_date">Tuesday, 27 October</small></div>
+          <div class="notif" id="pv_notif">
+            <div class="nh"><img src="/icons/icon-192.png" alt=""><span>DRP Reading</span><span class="nt">now</span></div>
+            <div class="ntitle" id="pv_title"></div>
+            <div class="nbody" id="pv_body"></div>
+            <div class="nact"><span id="pv_cta"></span></div>
+          </div>
+        </div>
+        <p class="hint cap" id="pv_as"></p>
+      </div>
+      <div class="pane" data-p="whatsapp">
+        <div class="phone"><div class="scr">
+          <div class="wa-top"><img src="/icons/icon-192.png" alt=""><div><b>StoryWeaver DRP</b><small>Business account</small></div></div>
+          <div class="wa-body">
+            <div class="bubble" id="pv_wa"><div class="h" id="pv_wa_h"></div><div id="pv_wa_b" class="wb"></div><div class="ft">Pratham Books · StoryWeaver</div></div>
+            <div class="qr-replies" id="pv_wa_qr"></div>
+          </div>
+        </div></div>
+        <label class="f" style="margin-top:14px">Send this to a WhatsApp number (country code, no +)<input id="waNum" placeholder="9198XXXXXXXX" inputmode="numeric"></label>
+        <button class="btn teal" id="waBtn" style="margin-top:8px">Open in WhatsApp</button>
+        <p class="hint" style="margin:8px 0 0">Demo uses a click-to-chat link. Production sends a Meta-approved template through the WhatsApp Business API.</p>
+      </div>
+    </div>
+  </aside>
+</main>
+</div>
+<div class="toastmsg" id="toastmsg" role="status"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="/shared/triggers.js"></script>
+<script src="/studio/studio.js"></script>
+</body>
+</html>
